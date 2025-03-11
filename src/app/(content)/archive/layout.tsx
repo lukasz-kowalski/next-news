@@ -1,11 +1,14 @@
 import { PropsWithChildren, ReactNode } from "react";
 
-interface Props extends PropsWithChildren {
+interface Props {
   archive: ReactNode;
   latest: ReactNode;
 }
 
-export default function ArchiveLayout({ archive, latest }: Props) {
+export default function ArchiveLayout({
+  archive,
+  latest,
+}: PropsWithChildren<Props>) {
   return (
     <div>
       <h1>News Archive</h1>

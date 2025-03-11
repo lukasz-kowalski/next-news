@@ -7,13 +7,13 @@ import {
   getNewsForYearAndMonth,
 } from "@/lib/news";
 
-type PageProps = {
+type Props = {
   params: { filter: string[] | undefined };
   searchParams?: { [key: string]: string | string[] | undefined };
 };
 
-export default function FilteredNewsPage({ params }: PageProps) {
-  const filter = params.filter;
+export default async function FilteredNewsPage({ params }: Props) {
+  const { filter } = await params;
 
   const selectedYear = filter?.[0];
   const selectedMonth = filter?.[1];
@@ -38,7 +38,7 @@ export default function FilteredNewsPage({ params }: PageProps) {
   }
 
   if (
-    (selectedYear && getAvailableNewsYears().includes(Number(selectedYear))) ||
+    (selectedYear && !getAvailableNewsYears().includes(Number(selectedYear))) ||
     (selectedMonth && !getAvailableNewsMonths(selectedMonth))
   ) {
     throw new Error("Invalid filter.");
@@ -56,7 +56,7 @@ export default function FilteredNewsPage({ params }: PageProps) {
 
               return (
                 <li key={link}>
-                  <Link href={`/archive/${href}`}>{link}</Link>
+                  <Link href={href}>{link}</Link>
                 </li>
               );
             })}

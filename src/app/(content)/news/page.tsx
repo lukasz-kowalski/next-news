@@ -1,6 +1,6 @@
 import NewsList from "@/components/NewsList";
 
-import { DUMMY_NEWS } from "../../../dummy-news";
+import { DUMMY_NEWS } from "../../../../dummy-news";
 
 export default function NewsPage() {
   return (
