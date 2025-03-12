@@ -1,12 +1,7 @@
-import Link from "next/link";
+import { Suspense } from "react";
 
-import NewsList from "@/components/NewsList";
-import {
-  getAvailableNewsMonths,
-  getAvailableNewsYears,
-  getNewsForYear,
-  getNewsForYearAndMonth,
-} from "@/lib/news";
+import FilteredNews from "@/components/FilteredNews";
+import FilterHeader from "@/components/FilterHeader";
 
 type Props = {
   params: { filter: string[] | undefined };
@@ -19,54 +14,14 @@ export default async function FilteredNewsPage({ params }: Props) {
   const selectedYear = filter?.[0];
   const selectedMonth = filter?.[1];
 
-  let news;
-  let links = await getAvailableNewsYears();
-
-  if (selectedYear && !selectedMonth) {
-    news = await getNewsForYear(selectedYear);
-    links = getAvailableNewsMonths(selectedYear);
-  }
-
-  if (selectedYear && selectedMonth) {
-    news = await getNewsForYearAndMonth(selectedYear, selectedMonth);
-    links = [];
-  }
-
-  let newsContent = <p>No news found for the selected period.</p>;
-
-  if (news && news.length > 0) {
-    newsContent = <NewsList news={news} />;
-  }
-
-  const availableYears = await getAvailableNewsYears();
-
-  if (
-    (selectedYear && !availableYears.includes(selectedYear)) ||
-    (selectedMonth && !getAvailableNewsMonths(selectedMonth))
-  ) {
-    throw new Error("Invalid filter.");
-  }
-
   return (
     <>
-      <header id="archive-header">
-        <nav>
-          <ul>
-            {links.map((link) => {
-              const href = selectedYear
-                ? `/archive/${selectedYear}/${link}`
-                : `/archive/${link}`;
-
-              return (
-                <li key={link}>
-                  <Link href={href}>{link}</Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      </header>
-      {newsContent}
+      <Suspense fallback={<p>Loading filter...</p>}>
+        <FilterHeader year={selectedYear} month={selectedMonth} />
+      </Suspense>
+      <Suspense fallback={<p>Loading news...</p>}>
+        <FilteredNews year={selectedYear} month={selectedMonth} />
+      </Suspense>
     </>
   );
 }
